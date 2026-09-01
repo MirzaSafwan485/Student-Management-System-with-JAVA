@@ -1,20 +1,61 @@
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.sql.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.sun.jdi.connect.Connector;
 class StudentRecord{
     ArrayList<Student> Students = new ArrayList<>();
+    Connection BaseConnect;
+    public StudentRecord(Connection Connector) {
+        this.BaseConnect = Connector;
+    }
+
+    boolean checkId(String Id){
+        AtomicBoolean isAssigned = new AtomicBoolean(false);
+        try(Statement query = BaseConnect.createStatement();){
+            ResultSet table = query.executeQuery("select ID from StudentDetails");
+            while(table.next()){
+                String ID = table.getString(1);
+                if(ID.equals(Id)){
+                    isAssigned.set(true);
+                    break;
+                }
+            }
+        } catch(SQLException q){
+            System.out.println("Column Selection Query Failed!!");
+        }
+        finally{
+            return isAssigned.get();
+        }
+    }
 
     void addStudent(){
         Student S = new Student();
         S.enterDetails();
-        for(Student student : Students){
-            if(S.roll == student.roll){
-                System.out.println("STUDENT ROLL NUMBER ALREADY EXISTS");
-                return;
+        if(!checkId(S.ID)){
+            Students.add(S);
+            String sql = "INSERT INTO StudentDetails(ID, ClassRoll, Name, Age, Year, Branch, Section, Department, CGPA) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try(PreparedStatement query = BaseConnect.prepareStatement(sql);){
+                query.setString(1, S.ID);
+                query.setInt(2, S.roll);
+                query.setString(3, S.name);
+                query.setInt(4, S.age);
+                query.setInt(5, S.year);
+                query.setString(6, S.branch);
+                query.setString(7, S.section);
+                query.setString(8, S.department);
+                query.setDouble(9, S.cgpa);
+                query.executeUpdate();
+            } catch(SQLException q){
+                System.out.println("Insertion Query Failed");
+                q.printStackTrace();
             }
         }
-        Students.add(S);
+        else{
+            System.out.println("ID Already Assigned");
+        }
     }
 
     void display(){
@@ -26,7 +67,7 @@ class StudentRecord{
             System.out.println("------------------------------------");
             System.out.println("NAME : " + student.name);
             System.out.println("AGE : " + student.age);
-            System.out.println("CLASS : " + student.clas);
+            System.out.println("BRANCH : " + student.branch);
             System.out.println("ROLL : " + student.roll);
             System.out.println("CGPA : " + student.cgpa);
             System.out.println("------------------------------------");
@@ -41,7 +82,7 @@ class StudentRecord{
             student_roll = scan.nextInt();
         }
         catch(InputMismatchException e){
-            System.out.println("Enter a valid roll number!!");
+            System.out.println("Enter a valid ROLL NUMBER!!");
             return;
         }
         for(Student student : Students){
@@ -61,7 +102,7 @@ class StudentRecord{
             student_roll = scan.nextInt();
         }
         catch(InputMismatchException e){
-            System.out.println("Enter a valid roll number!!");
+            System.out.println("Enter a valid ROLL NUMBER!!");
             scan.next();
             return;
         }
@@ -70,7 +111,7 @@ class StudentRecord{
                 System.out.println("------------------------------------");
                 System.out.println("NAME : " + student.name);
                 System.out.println("AGE : " + student.age);
-                System.out.println("CLASS : " + student.clas);
+                System.out.println("Branch : " + student.branch);
                 System.out.println("ROLL : " + student.roll);
                 System.out.println("CGPA : " + student.cgpa);
                 System.out.println("------------------------------------");
@@ -82,7 +123,7 @@ class StudentRecord{
 
     void update(){
         Scanner scan = new Scanner(System.in);
-        System.out.print("ENTER ROLL NO OF STUDENT : ");
+        System.out.print("ENTER ROLL NUMBER OF STUDENT : ");
         int student_roll = scan.nextInt();
         for(Student student : Students){
             if(student.roll == student_roll){
@@ -91,7 +132,7 @@ class StudentRecord{
                     System.out.println("------ EDIT ------");
                     System.out.println("1. NAME");
                     System.out.println("2. AGE");
-                    System.out.println("3. CLASS");
+                    System.out.println("3. BRANCH");
                     System.out.println("4. CGPA");
                     System.out.println("5. ROLL");
                     System.out.println("6. EXIT");
@@ -115,11 +156,11 @@ class StudentRecord{
                             System.out.println("AGE UPDATED SUCCESFULLY");
                             break;
                         case 3:
-                            System.out.println("Current Class : " + student.clas);
-                            System.out.print("ENTER NEW CLASS : ");
-                            student.clas = scan.nextLine();
-                            System.out.println("Updated Class : " + student.clas);
-                            System.out.println("CLASS UPDATED SUCCESFULLY");
+                            System.out.println("Current Branch : " + student.branch);
+                            System.out.print("ENTER NEW BRANCH : ");
+                            student.branch = scan.nextLine();
+                            System.out.println("Updated Branch : " + student.branch);
+                            System.out.println("Branch UPDATED SUCCESFULLY");
                             break;
                         case 4:
                             System.out.println("Current CGPA : " + student.cgpa);
@@ -130,8 +171,8 @@ class StudentRecord{
                             System.out.println("CGPA UPDATED SUCCESFULLY");
                             break;
                         case 5:
-                            System.out.println("Current Roll : " + student.roll);
-                            System.out.print("ENTER NEW ROLL : ");
+                            System.out.println("Current ROLL NUMBER : " + student.ID);
+                            System.out.print("ENTER NEW ROLL NUMBER : ");
                             int new_roll = scan.nextInt();
                             scan.nextLine();
                             boolean roll_exists = false;
@@ -143,8 +184,8 @@ class StudentRecord{
                             }
                             if(!roll_exists){
                                 student.roll = new_roll;
-                                System.out.println("Updated Roll : " + student.roll);
-                                System.out.println("ROLL UPDATED SUCCESFULLY");
+                                System.out.println("Updated ROLL NUMBER : " + student.ID);
+                                System.out.println("ROLL NUMBER UPDATED SUCCESFULLY");
                                 break;
                             }
                             else{
