@@ -1,13 +1,51 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+public class Main {
+    public static void main(String[] args){
+        Scanner scan = new Scanner(System.in);
+        StudentRecord record = new StudentRecord();
+        int choice = 0;
+        while(choice != 6){
+            System.out.println("---------- CHOOSE ----------");
+            System.out.println("1. ADD STUDENT");
+            System.out.println("2. SHOW STUDENTS");
+            System.out.println("3. REMOVE STUDENT");
+            System.out.println("4. SEARCH STUDENT");
+            System.out.println("5. EDIT STUDENT");
+            System.out.println("6. EXIT");
+            System.out.print("CHOOSE : ");
+            try{
+                choice = scan.nextInt();
+            }
+            catch(InputMismatchException e){
+                System.out.println("INVALID CHOICE ENTERED!! CHOOSE BETWEEN 1 to 6");
+                scan.nextLine();
+                continue;
+            }
+            switch(choice){
+                case 1:
+                    record.addStudent();
+                    break;
+                case 2:
+                    record.display();
+                    break;
+                case 3:
+                    record.removeStudent();
+                    break;
+                case 4:
+                    record.searchStudent();
+                    break;
+                case 5:
+                    record.update();
+                    break;
+                case 6:
+                    System.out.println("OPERATIONS SUCCESFULL");
+                    break;
+                default:
+                    System.out.println("INVALID CHOICE ENTERED!! CHOOSE BETWEEN 1 to 6");
+                    break;
+            }
+        }
     }
 }
