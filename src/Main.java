@@ -44,7 +44,7 @@ public class Main {
                             record.searchStudent();
                             break;
                         case 5:
-                            record.update();
+//                            record.update();
                             break;
                         case 6:
                             System.out.println("OPERATIONS SUCCESFULL");
