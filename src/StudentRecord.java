@@ -172,113 +172,156 @@ class StudentRecord{
         }
     }
 
-//    void update(){
-////       ----------------------- UNDER PROCESS -----------------------
-//        String sql = "select * from StudentDetails where ID = ?";
-//        try(PreparedStatement query = BaseConnect.prepareStatement(sql)){
-//            Scanner scan = new Scanner(System.in);
-//            System.out.print("ENTER ID OF STUDENT : ");
-//            String student_ID = scan.nextLine();
-//            query.setString(1, student_ID);
-//            ResultSet table = query.executeQuery();
-//                    int edit_choice = 0;
-//                    while(edit_choice != 10){
-//                        System.out.println("------ EDIT ------");
-//                        System.out.println("1. ID");
-//                        System.out.println("2. ROLL");
-//                        System.out.println("3. NAME");
-//                        System.out.println("4. AGE");
-//                        System.out.println("5. YEAR");
-//                        System.out.println("6. BRANCH");
-//                        System.out.println("7. SECTION");
-//                        System.out.println("8. DEPARTMENT");
-//                        System.out.println("9. CGPA");
-//                        System.out.println("10. EXIT");
-//                        System.out.print("CHOOSE : ");
-//                        edit_choice = scan.nextInt();
-//                        scan.nextLine();
-//                        switch(edit_choice){
-//                            case 1:
-//                                System.out.println("CURRENT ID : " + table.getString(1));
-//                                System.out.println("ENTER NEW ID : ");
-//                                String newID = scan.nextLine();
-//                                if(!checkId(newID)){
-//                                    table.updateString(1, newID);
-//                                }
-//                                else{
-//                                    System.out.println("ID Already Assigned!!");
-//                                }
-//
-//                            case 2:
-//                                System.out.println("CURRENT ROLL NUMBER : " + table.getInt(2));
-//                                System.out.print("ENTER NEW ROLL NUMBER : ");
-//                                int new_roll = scan.nextInt();
-//                                scan.nextLine();
-//                                if(!checkRoll(table.getInt(5), table.getString(6), table.getString(7), new_roll)){
-////                                    String sql = "";
-////                                    PreparedStatement query = BaseConnect.prepareStatement(sql);
-//                                }
-//                                boolean roll_exists = false;
-//                                for(Student std : Students){
-//                                    if(std.roll == new_roll){
-//                                        roll_exists = true;
-//                                        break;
-//                                    }
-//                                }
-//                                if(!roll_exists){
-//                                    student.roll = new_roll;
-//                                    System.out.println("Updated ROLL NUMBER : " + student.ID);
-//                                    System.out.println("ROLL NUMBER UPDATED SUCCESFULLY");
-//                                    break;
-//                                }
-//                                else{
-//                                    System.out.println("THE ENTERED ROLL NUMBER IS ALREADY ASSIGNED!!");
-//                                    break;
-//                                }
-//
-//
-//                            case 3:
-//                                System.out.println("Current Name : " + table.getString());
-//                                System.out.print("ENTER NEW NAME : ");
-//                                student.name = scan.nextLine();
-//                                System.out.println("Updated Name : " + student.name);
-//                                System.out.println("NAME UPDATED SUCCESFULLY");
-//                                break;
-//                            case 4:
-//                                System.out.println("Current Age : " + student.age);
-//                                System.out.print("ENTER NEW AGE : ");
-//                                student.age = scan.nextInt();
-//                                scan.nextLine();
-//                                System.out.println("Updated Age : " + student.age);
-//                                System.out.println("AGE UPDATED SUCCESFULLY");
-//                                break;
-//                            case 3:
-//                                System.out.println("Current Branch : " + student.branch);
-//                                System.out.print("ENTER NEW BRANCH : ");
-//                                student.branch = scan.nextLine();
-//                                System.out.println("Updated Branch : " + student.branch);
-//                                System.out.println("Branch UPDATED SUCCESFULLY");
-//                                break;
-//                            case 9:
-//                                System.out.println("Current CGPA : " + student.cgpa);
-//                                System.out.print("ENTER NEW CGPA : ");
-//                                student.cgpa = scan.nextDouble();
-//                                scan.nextLine();
-//                                System.out.println("Updated CGPA : " + student.cgpa);
-//                                System.out.println("CGPA UPDATED SUCCESFULLY");
-//                                break;
-//                            case 6:
-//                                System.out.println("Student Details Edited Successfully");
-//                                break;
-//                            default:
-//                                System.out.println("Choose from 1/2/3/4/5/6");
-//                                break;
-//                        }
-//                    }
-//                    return;
-//                    System.out.println("Student Not Found");
-//        } catch (SQLException e){
-//            System.out.println("update -> Query Creation Failed");
-//        }
-//    }
+    void update(){
+//       ----------------------- UNDER PROCESS -----------------------
+        String sql = "select * from StudentDetails where ID = ?";
+        try(PreparedStatement query = BaseConnect.prepareStatement(sql, ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE)){
+            Scanner scan = new Scanner(System.in);
+            System.out.print("ENTER ID OF STUDENT : ");
+            String student_ID = scan.nextLine();
+            query.setString(1, student_ID);
+            ResultSet table = query.executeQuery();
+            if(table.next()){
+                int edit_choice = 0;
+                while(edit_choice != 10){
+                    System.out.println("------ EDIT ------");
+                    System.out.println("1. ID");
+                    System.out.println("2. ROLL");
+                    System.out.println("3. NAME");
+                    System.out.println("4. AGE");
+                    System.out.println("5. YEAR");
+                    System.out.println("6. BRANCH");
+                    System.out.println("7. SECTION");
+                    System.out.println("8. DEPARTMENT");
+                    System.out.println("9. CGPA");
+                    System.out.println("10. EXIT");
+                    System.out.print("CHOOSE : ");
+                    edit_choice = scan.nextInt();
+                    scan.nextLine();
+                    switch(edit_choice){
+                        case 1:
+                            System.out.println("CURRENT ID : " + table.getString(1));
+                            System.out.print("ENTER NEW ID : ");
+                            String newID = scan.nextLine();
+                            if(!checkId(newID)){
+                                table.updateString(1, newID);
+                            }
+                            else{
+                                System.out.println("ID Already Assigned!!");
+                            }
+                            break;
+
+                        case 2:
+                            System.out.println("CURRENT ROLL NUMBER : " + table.getInt(2));
+                            System.out.print("ENTER NEW ROLL NUMBER : ");
+                            int new_roll = scan.nextInt();
+                            scan.nextLine();
+                            if(!checkRoll(table.getInt(5), table.getString(6), table.getString(7), new_roll)){
+                                table.updateInt(2, new_roll);
+                                table.updateRow();
+                            }
+                            else{
+                                System.out.println("ROLL NUMBER IS ALREADY ASSIGNED!!");
+                            }
+                            System.out.println("UPDATED ROLL : " + table.getInt(2));
+                            System.out.println("ROLL UPDATED SUCCESFULLY");
+                            break;
+
+
+                        case 3:
+                            System.out.println("CURRENT NAME : " + table.getString(3));
+                            System.out.print("ENTER NEW NAME : ");
+                            String name = scan.nextLine();
+                            table.updateString(3, name);
+                            table.updateRow();
+                            System.out.println("UPDATED NAME : " + table.getString(3));
+                            System.out.println("NAME UPDATED SUCCESFULLY");
+                            break;
+
+
+                        case 4:
+                            System.out.println("CURRENT AGE : " + table.getInt(4));
+                            System.out.print("ENTER NEW AGE : ");
+                            int newAge = scan.nextInt();
+                            scan.nextLine();
+                            table.updateInt(4, newAge);
+                            table.updateRow();
+                            System.out.println("UPDATED AGE : " + table.getInt(4));
+                            System.out.println("AGE UPDATED SUCCESFULLY");
+                            break;
+
+
+                        case 5:
+                            System.out.println("CURRENT ACADEMIC YEAR : " + table.getInt(5));
+                            System.out.print("ENTER NEW ACADEMIC YEAR : ");
+                            int newYear = scan.nextInt();
+                            scan.nextLine();
+                            table.updateInt(5, newYear);
+                            table.updateRow();
+                            System.out.println("UPDATED ACADEMIC YEAR : " + table.getInt(5));
+                            System.out.println("ACADEMIC YEAR UPDATED SUCCESFULLY");
+                            break;
+
+                        case 6:
+                            System.out.println("CURRENT BRANCH : " + table.getString(6));
+                            System.out.print("ENTER NEW BRANCH : ");
+                            String newBranch = scan.nextLine();
+                            table.updateString(6, newBranch);
+                            table.updateRow();
+                            System.out.println("UPDATED BRANCH : " + table.getString(6));
+                            System.out.println("Branch UPDATED SUCCESFULLY");
+                            break;
+
+                        case 7:
+                            System.out.println("CURRENT SECTION : " + table.getString(7));
+                            System.out.print("ENTER NEW SECTION : ");
+                            String newSection = scan.nextLine();
+                            table.updateString(7, newSection);
+                            table.updateRow();
+                            System.out.println("UPDATED SECTION : " + table.getString(7));
+                            System.out.println("SECTION UPDATED SUCCESSFULLY");
+                            break;
+
+                        case 8:
+                            System.out.println("CURRENT DEPARTMENT : " + table.getString(8));
+                            System.out.print("ENTER NEW DEPARTMENT : ");
+                            String newDepartment = scan.nextLine();
+                            table.updateString(8, newDepartment);
+                            table.updateRow();
+                            System.out.println("UPDATED DEPARTMENT : " + table.getString(8));
+                            System.out.println("DEPARTMENT UPDATED SUCCESSFULLY");
+                            break;
+
+                        case 9:
+                            System.out.println("CURRENT CGPA : " + table.getDouble(9));
+                            System.out.print("ENTER NEW CGPA : ");
+                            double newCGPA = scan.nextDouble();
+                            scan.nextLine();
+                            table.updateDouble(9, newCGPA);
+                            table.updateRow();
+                            System.out.println("UPDATED CGPA : " + table.getDouble(9));
+                            System.out.println("CGPA UPDATED SUCCESFULLY");
+                            break;
+
+                        case 10:
+                            System.out.println("Student Details Edited Successfully");
+                            break;
+
+
+                        default:
+                            System.out.println("Choose from 1/2/3/4/5/6");
+                            break;
+                    }
+                }
+            }
+            else{
+                System.out.println("Student Not Found");
+                return;
+            }
+        } catch (SQLException e){
+            System.out.println("update -> Query Creation Failed");
+            e.printStackTrace();
+        }
+    }
 }
